@@ -62,6 +62,8 @@
         let sequence = [];
         let playerSequence = [];
         let level = 4;
+        let maxLevel = 0;
+        let mistakes = 0;
 
         readyBtn.addEventListener('click', () => {
             readyBtn.style.display = 'none';
@@ -148,13 +150,31 @@
         function checkPlayerSequence() {
             if (playerSequence.toString() === sequence.toString()) {
                 message.textContent = 'Good!';
+                maxLevel = Math.max(maxLevel, level);
                 level++;
+                mistakes = 0;
                 setTimeout(startGame, 1000);
             } else {
                 message.textContent = 'No...';
-                setTimeout(startGame, 1000);
+                mistakes++;
+                if (mistakes >= 2) {
+                    message.textContent = `Game Over. You reached level ${maxLevel}`;
+                    resetGame();
+                } else {
+                    setTimeout(startGame, 1000);
+                }
             }
+        }
+
+        function resetGame() {
+            level = 4;
+            maxLevel = 0;
+            mistakes = 0;
+            readyBtn.style.display = 'block';
+            gameBoard.style.display = 'none';
+            startBtn.style.display = 'none';
         }
     </script>
 </body>
 </html>
+
