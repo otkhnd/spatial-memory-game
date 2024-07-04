@@ -33,6 +33,9 @@
         .highlight {
             background-color: yellow;
         }
+        .active {
+            background-color: orange;
+        }
     </style>
 </head>
 <body>
@@ -111,16 +114,31 @@
         }
 
         function enablePlayerInput() {
-            cells.forEach(cell => cell.addEventListener('click', handlePlayerInput));
+            cells.forEach(cell => {
+                cell.addEventListener('mousedown', handlePlayerInputStart);
+                cell.addEventListener('mouseup', handlePlayerInputEnd);
+                cell.addEventListener('touchstart', handlePlayerInputStart);
+                cell.addEventListener('touchend', handlePlayerInputEnd);
+            });
         }
 
         function disablePlayerInput() {
-            cells.forEach(cell => cell.removeEventListener('click', handlePlayerInput));
+            cells.forEach(cell => {
+                cell.removeEventListener('mousedown', handlePlayerInputStart);
+                cell.removeEventListener('mouseup', handlePlayerInputEnd);
+                cell.removeEventListener('touchstart', handlePlayerInputStart);
+                cell.removeEventListener('touchend', handlePlayerInputEnd);
+            });
         }
 
-        function handlePlayerInput(event) {
+        function handlePlayerInputStart(event) {
             const index = Array.from(cells).indexOf(event.target);
+            event.target.classList.add('active');
             playerSequence.push(index);
+        }
+
+        function handlePlayerInputEnd(event) {
+            event.target.classList.remove('active');
             if (playerSequence.length === sequence.length) {
                 disablePlayerInput();
                 checkPlayerSequence();
