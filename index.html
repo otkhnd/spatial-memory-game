@@ -3,178 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spatial Memory Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #game-board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 10px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            background-color: lightgray;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .highlight {
-            background-color: yellow;
-        }
-        .active {
-            background-color: orange;
-        }
-    </style>
+    <title>Memory Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="ready-btn">Ready?</button>
-    <div id="game-board" style="display: none;">
-        <div class="cell" id="cell-0"></div>
-        <div class="cell" id="cell-1"></div>
-        <div class="cell" id="cell-2"></div>
-        <div class="cell" id="cell-3"></div>
-        <div class="cell" id="cell-4"></div>
-        <div class="cell" id="cell-5"></div>
-        <div class="cell" id="cell-6"></div>
-        <div class="cell" id="cell-7"></div>
-        <div class="cell" id="cell-8"></div>
+    <div id="game-container">
+        <button id="ready-button">Ready?</button>
+        <div id="game-board" class="hidden">
+            <div class="cell" id="cell-0"></div>
+            <div class="cell" id="cell-1"></div>
+            <div class="cell" id="cell-2"></div>
+            <div class="cell" id="cell-3"></div>
+            <div class="cell" id="cell-4"></div>
+            <div class="cell" id="cell-5"></div>
+            <div class="cell" id="cell-6"></div>
+            <div class="cell" id="cell-7"></div>
+            <div class="cell" id="cell-8"></div>
+        </div>
+        <button id="start-button" class="hidden">Start</button>
+        <div id="message" class="hidden">Repeat</div>
     </div>
-    <button id="start-btn" style="display: none;">Start</button>
-    <div id="message"></div>
-    <script>
-        const readyBtn = document.getElementById('ready-btn');
-        const startBtn = document.getElementById('start-btn');
-        const gameBoard = document.getElementById('game-board');
-        const cells = document.querySelectorAll('.cell');
-        const message = document.getElementById('message');
-        let sequence = [];
-        let playerSequence = [];
-        let level = 4;
-        let maxLevel = 0;
-        let mistakes = 0;
-
-        readyBtn.addEventListener('click', () => {
-            readyBtn.style.display = 'none';
-            gameBoard.style.display = 'grid';
-            startBtn.style.display = 'block';
-        });
-
-        startBtn.addEventListener('click', startGame);
-
-        function startGame() {
-            startBtn.style.display = 'none';
-            message.textContent = '';
-            playerSequence = [];
-            sequence = generateSequence(level);
-            showSequence(sequence);
-        }
-
-        function generateSequence(length) {
-            const seq = [];
-            for (let i = 0; i < length; i++) {
-                const randomCell = Math.floor(Math.random() * 9);
-                seq.push(randomCell);
-            }
-            return seq;
-        }
-
-        function showSequence(seq) {
-            let index = 0;
-            const interval = setInterval(() => {
-                if (index === seq.length) {
-                    clearInterval(interval);
-                    message.textContent = 'Repeat';
-                    enablePlayerInput();
-                    return;
-                }
-                highlightCell(seq[index]);
-                setTimeout(() => {
-                    unhighlightCell(seq[index]);
-                    index++;
-                }, 500);
-            }, 1000);
-        }
-
-        function highlightCell(index) {
-            cells[index].classList.add('highlight');
-        }
-
-        function unhighlightCell(index) {
-            cells[index].classList.remove('highlight');
-        }
-
-        function enablePlayerInput() {
-            cells.forEach(cell => {
-                cell.addEventListener('mousedown', handlePlayerInputStart);
-                cell.addEventListener('mouseup', handlePlayerInputEnd);
-                cell.addEventListener('touchstart', handlePlayerInputStart);
-                cell.addEventListener('touchend', handlePlayerInputEnd);
-            });
-        }
-
-        function disablePlayerInput() {
-            cells.forEach(cell => {
-                cell.removeEventListener('mousedown', handlePlayerInputStart);
-                cell.removeEventListener('mouseup', handlePlayerInputEnd);
-                cell.removeEventListener('touchstart', handlePlayerInputStart);
-                cell.removeEventListener('touchend', handlePlayerInputEnd);
-            });
-        }
-
-        function handlePlayerInputStart(event) {
-            const index = Array.from(cells).indexOf(event.target);
-            event.target.classList.add('active');
-            playerSequence.push(index);
-        }
-
-        function handlePlayerInputEnd(event) {
-            event.target.classList.remove('active');
-            if (playerSequence.length === sequence.length) {
-                disablePlayerInput();
-                checkPlayerSequence();
-            }
-        }
-
-        function checkPlayerSequence() {
-            if (playerSequence.toString() === sequence.toString()) {
-                message.textContent = 'Good!';
-                maxLevel = Math.max(maxLevel, level);
-                level++;
-                mistakes = 0;
-                setTimeout(startGame, 1000);
-            } else {
-                message.textContent = 'No...';
-                mistakes++;
-                if (mistakes >= 2) {
-                    message.textContent = `Game Over. You reached level ${maxLevel}`;
-                    resetGame();
-                } else {
-                    setTimeout(startGame, 1000);
-                }
-            }
-        }
-
-        function resetGame() {
-            level = 4;
-            maxLevel = 0;
-            mistakes = 0;
-            readyBtn.style.display = 'block';
-            gameBoard.style.display = 'none';
-            startBtn.style.display = 'none';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
 
